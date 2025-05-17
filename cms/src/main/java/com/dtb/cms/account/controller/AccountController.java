@@ -18,8 +18,12 @@ public class AccountController {
     private AccountService service;
 
     @GetMapping("/accounts")
-    public ResponseEntity<?> getAccounts(@RequestParam Integer page, @RequestParam Integer size){
-        Page<Account> results =  service.getAccounts(page, size);
+    public ResponseEntity<?> getAccounts(@RequestParam Integer page,
+                                         @RequestParam Integer size,
+                                         @RequestParam(required = false) String iban,
+                                         @RequestParam(required = false) String bicSwift,
+                                         @RequestParam(required = false) String cardAlias){
+        Page<Account> results =  service.getAccounts(page, size, iban, bicSwift, cardAlias);
 
         return ResponseEntity.ok(results);
     }

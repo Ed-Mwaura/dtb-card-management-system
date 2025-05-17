@@ -17,8 +17,12 @@ public class CardController {
     private CardService service;
 
     @GetMapping("/cards")
-    public ResponseEntity<?> getCards(@RequestParam Integer page, @RequestParam Integer size){
-        Page<Card> results =  service.getCards(page, size);
+    public ResponseEntity<?> getCards(@RequestParam Integer page,
+                                      @RequestParam Integer size,
+                                      @RequestParam(required = false) String alias,
+                                      @RequestParam(required = false) String pan,
+                                      @RequestParam(required = false) String cardType){
+        Page<Card> results =  service.getCards(page, size, alias, pan, cardType);
 
         return ResponseEntity.ok(results);
     }
