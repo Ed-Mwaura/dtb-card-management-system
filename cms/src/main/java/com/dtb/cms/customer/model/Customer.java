@@ -16,7 +16,7 @@ import java.util.List;
 @Entity
 public class Customer {
     @Id
-    @Column(nullable = false)
+    @Column(name = "customer_id", nullable = false)
     private Long customerId;
 
     @Column(nullable = false)
@@ -32,6 +32,7 @@ public class Customer {
     @Column(nullable = false, updatable = false)
     private Date dateCreated;
 
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "customer_id", referencedColumnName = "customer_id")
     private List<Account> accounts;
 }
