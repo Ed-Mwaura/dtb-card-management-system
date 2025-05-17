@@ -32,7 +32,6 @@ public class Customer {
     @Column(nullable = false, updatable = false)
     private Date dateCreated;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "customer_id", referencedColumnName = "customer_id")
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
     private List<Account> accounts;
 }

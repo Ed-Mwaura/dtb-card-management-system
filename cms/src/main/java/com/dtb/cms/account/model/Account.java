@@ -1,6 +1,8 @@
 package com.dtb.cms.account.model;
 
 import com.dtb.cms.card.model.entity.Card;
+import com.dtb.cms.customer.model.Customer;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,11 +25,15 @@ public class Account {
     @Column(nullable = false)
     private String bicSwift;
 
-    @Column(name = "customer_id", nullable = false)
+    @Column(name = "customer_id", insertable = false, updatable = false)
     private Long customerId;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "account_id", referencedColumnName = "account_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "customer_id")
+    @JsonIgnore
+    private Customer customer;
+
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
     private List<Card> cards;
 
 }
