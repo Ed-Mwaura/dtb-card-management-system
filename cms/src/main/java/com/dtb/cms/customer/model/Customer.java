@@ -1,0 +1,37 @@
+package com.dtb.cms.customer.model;
+
+import com.dtb.cms.account.model.Account;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.util.Date;
+import java.util.List;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+public class Customer {
+    @Id
+    @Column(nullable = false)
+    private Long customerId;
+
+    @Column(nullable = false)
+    private String firstName;
+
+    @Column(nullable = false)
+    private String lastName;
+
+    private String otherName;
+
+    // added since we need date created for the filter
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
+    private Date dateCreated;
+
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Account> accounts;
+}
