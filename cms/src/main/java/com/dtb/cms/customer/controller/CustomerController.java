@@ -1,7 +1,7 @@
-package com.dtb.cms.card.controller;
+package com.dtb.cms.customer.controller;
 
-import com.dtb.cms.card.model.entity.Card;
-import com.dtb.cms.card.service.CardService;
+import com.dtb.cms.customer.model.Customer;
+import com.dtb.cms.customer.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -12,13 +12,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/cms/api")
-public class CardController {
-    @Autowired
-    private CardService service;
+public class CustomerController {
 
-    @GetMapping("/cards")
-    public ResponseEntity<?> getCards(@RequestParam Integer page, @RequestParam Integer size){
-        Page<Card> results =  service.getCards(page, size);
+    @Autowired
+    private CustomerService service;
+
+    @GetMapping("/customers")
+    public ResponseEntity<?> getCustomers(@RequestParam Integer page, @RequestParam Integer size){
+        Page<Customer> results =  service.getCustomers(page, size);
 
         return ResponseEntity.ok(results);
     }

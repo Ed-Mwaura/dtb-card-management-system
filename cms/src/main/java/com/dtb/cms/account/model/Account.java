@@ -23,6 +23,9 @@ public class Account {
     @Column(nullable = false)
     private String bicSwift;
 
+    @Column(name = "customer_id", nullable = false)
+    private Long customerId;
+
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "account_id", referencedColumnName = "account_id")
     private List<Card> cards;

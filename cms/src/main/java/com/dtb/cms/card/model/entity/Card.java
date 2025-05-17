@@ -24,4 +24,7 @@ public class Card {
 
     @Column(nullable = false)
     private String cvv;
+
+    @Column(name = "account_id")
+    private Long accountId;
 }
