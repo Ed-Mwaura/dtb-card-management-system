@@ -7,7 +7,6 @@ import com.dtb.cms.card.dto.CardUpdateDTO;
 import com.dtb.cms.card.errors.CardLimitExceededException;
 import com.dtb.cms.card.model.entity.Card;
 import com.dtb.cms.card.model.enums.CardTypes;
-import com.dtb.cms.card.model.key.CardId;
 import com.dtb.cms.card.repository.CardRepository;
 import com.dtb.cms.card.specification.CardSpecifications;
 import jakarta.persistence.EntityNotFoundException;
@@ -53,8 +52,8 @@ public class CardService {
      * */
     private CardDTO toCardDTO(Card card, boolean override){
         return CardDTO.builder()
-                .cardId(card.getId().getCardId())
-                .cardType(card.getId().getCardType())
+                .cardId(card.getCardId())
+                .cardType(card.getCardType())
                 .alias(card.getAlias())
                 .pan(maskPan(card.getPan(), override))
                 .cvv(maskCvv(card.getCvv(), override))
@@ -93,10 +92,10 @@ public class CardService {
             throw new CardLimitExceededException("Account already has the maximum number of cards(2)");
         }
 
-        CardId id = new CardId(reqBody.getCardId(), reqBody.getCardType());
 
         Card newCard = new Card();
-        newCard.setId(id);
+        newCard.setCardId(reqBody.getCardId());
+        newCard.setCardType(reqBody.getCardType());
         newCard.setAlias(reqBody.getAlias());
         newCard.setPan(reqBody.getPan());
         newCard.setCvv(reqBody.getCvv());
@@ -111,11 +110,13 @@ public class CardService {
      * Method that updates given card
      * */
     public CardDTO updateCard(Long cardId, CardTypes cardType, CardUpdateDTO reqBody){
-        CardId id = new CardId(cardId, cardType);
+
+        // TODO: check existing card type
+
 
         // throw error that will be handled by global exception handler once implemented
         //TODO: implement global exception handler
-        Card card = repo.findById(id).orElseThrow(() -> new EntityNotFoundException("Card not found"));
+        Card card = repo.findById(cardId).orElseThrow(() -> new EntityNotFoundException("Card not found"));
 
         // update allowed fields
         if(reqBody.getAlias() != null) {
@@ -138,11 +139,10 @@ public class CardService {
      * Method to delete a given card
      * */
     public void deleteCard(Long cardId, CardTypes cardType){
-        CardId id = new CardId(cardId, cardType);
-        if(!repo.existsById(id)){
+        if(!repo.existsById(cardId)){
             throw new EntityNotFoundException("Card not found with ID: "+ cardId + ", type: " + cardType);
         }
 
-        repo.deleteById(id);
+        repo.deleteById(cardId);
     }
 }

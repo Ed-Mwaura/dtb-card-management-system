@@ -1,7 +1,7 @@
 package com.dtb.cms.card.model.entity;
 
 import com.dtb.cms.account.model.Account;
-import com.dtb.cms.card.model.key.CardId;
+import com.dtb.cms.card.model.enums.CardTypes;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -16,8 +16,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Entity
 public class Card {
-    @EmbeddedId
-    private CardId id;
+    @Id
+    private Long cardId;
+
+    @Enumerated(EnumType.STRING)
+    private CardTypes cardType;
 
     @Column(nullable = false)
     private String alias;
