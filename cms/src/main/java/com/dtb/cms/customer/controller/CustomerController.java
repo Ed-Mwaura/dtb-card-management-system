@@ -39,6 +39,16 @@ public class CustomerController {
     }
 
     /**
+     * New customer endpoint
+     * */
+    @PostMapping("/add")
+    public ResponseEntity<?> addCustomer(@RequestBody CustomerDTO reqBody){
+        CustomerDTO newCustomer = service.addCustomer(reqBody);
+
+        return ResponseEntity.ok(newCustomer);
+    }
+
+    /**
      * Customer update endpoint
      * */
     @PutMapping("/{customerId}")

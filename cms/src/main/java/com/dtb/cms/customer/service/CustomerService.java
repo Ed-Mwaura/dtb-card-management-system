@@ -75,6 +75,21 @@ public class CustomerService {
     }
 
     /**
+     * Method that adds a new customer
+     * */
+    public CustomerDTO addCustomer(CustomerDTO reqBody){
+        Customer customer = new Customer();
+
+        customer.setCustomerId(reqBody.getCustomerId());
+        customer.setFirstName(reqBody.getFirstName());
+        customer.setLastName(reqBody.getLastName());
+        customer.setOtherName(reqBody.getOtherName());
+        customer.setDateCreated(new Date());
+
+        return toCustomerDTO(repo.save(customer));
+    }
+
+    /**
      * Method that updates given customer
      * */
     public CustomerDTO updateCustomer(Long customerId, CustomerUpdateDTO reqBody){
