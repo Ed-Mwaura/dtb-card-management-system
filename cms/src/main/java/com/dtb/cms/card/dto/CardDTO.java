@@ -1,5 +1,6 @@
 package com.dtb.cms.card.dto;
 
+import com.dtb.cms.card.model.enums.CardTypes;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,9 +12,9 @@ import lombok.NoArgsConstructor;
 @Builder
 public class CardDTO {
     private Long cardId;
-    private String cardType;
+    private CardTypes cardType;
     private String alias;
     private String pan;
     private String cvv;
-    private Long accountId; // might remove later if not necessary. or modify to use account owner
+    private Long accountId;
 }

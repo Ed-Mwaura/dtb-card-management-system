@@ -25,9 +25,6 @@ public class Account {
     @Column(nullable = false)
     private String bicSwift;
 
-    @Column(name = "customer_id", insertable = false, updatable = false)
-    private Long customerId;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id")
     @JsonIgnore

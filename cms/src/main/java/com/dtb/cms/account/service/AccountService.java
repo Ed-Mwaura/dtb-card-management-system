@@ -4,6 +4,8 @@ import com.dtb.cms.account.dto.AccountDTO;
 import com.dtb.cms.account.model.Account;
 import com.dtb.cms.account.repository.AccountRepository;
 import com.dtb.cms.account.specification.AccountSpecifications;
+import com.dtb.cms.customer.model.Customer;
+import com.dtb.cms.customer.repository.CustomerRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -20,6 +22,9 @@ public class AccountService {
     @Autowired
     private AccountRepository repo;
 
+    @Autowired
+    private CustomerRepository customerRepo;
+
     /**
      * Method to convert the account to DTO that defines what will be displayed.
      * */
@@ -28,7 +33,7 @@ public class AccountService {
                 .accountId(account.getAccountId())
                 .iban(account.getIban())
                 .bicSwift(account.getBicSwift())
-                .customerId(account.getCustomerId())
+                .customerId(account.getCustomer().getCustomerId())
                 .build();
     }
 
@@ -49,6 +54,22 @@ public class AccountService {
         Page<Account> rawData = repo.findAll(fullSpec, pageable);
 
         return rawData.map(this::toAccountDTO);
+    }
+
+    /**
+     * Method that creates a new account
+     * */
+    public AccountDTO addAccount(Long customerId, AccountDTO reqBody){
+        Customer customer = customerRepo.findById(customerId).orElseThrow(()->new EntityNotFoundException("Customer not found"));
+
+        Account newAccount = new Account();
+
+        newAccount.setAccountId(reqBody.getAccountId());
+        newAccount.setIban(reqBody.getIban());
+        newAccount.setBicSwift(reqBody.getBicSwift());
+        newAccount.setCustomer(customer);
+
+        return toAccountDTO(repo.save(newAccount));
     }
 
     //TODO: None of the attributes of account seem editable. Confirm.

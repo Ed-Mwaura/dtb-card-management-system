@@ -28,11 +28,8 @@ public class Card {
     @Column(nullable = false)
     private String cvv;
 
-    @Column(name = "account_id")
-    private Long accountId;
-
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "account_id", insertable = false, updatable = false)
+    @JoinColumn(name = "account_id")
     @JsonIgnore
     private Account account;
 }

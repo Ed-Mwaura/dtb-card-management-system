@@ -41,6 +41,17 @@ public class AccountController {
     }
 
     /**
+     * Create new account endpoint
+     * */
+    @PostMapping
+    public ResponseEntity<?> addAccount(@RequestParam Long customerId,
+                                        @RequestBody AccountDTO reqBody){
+        AccountDTO newAcc = service.addAccount(customerId, reqBody);
+
+        return ResponseEntity.ok(newAcc);
+    }
+
+    /**
      * Delete card endpoint
      * */
     @DeleteMapping("/{accountId}")

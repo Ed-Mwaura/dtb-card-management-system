@@ -1,7 +1,10 @@
 package com.dtb.cms.card.service;
 
+import com.dtb.cms.account.model.Account;
+import com.dtb.cms.account.repository.AccountRepository;
 import com.dtb.cms.card.dto.CardDTO;
 import com.dtb.cms.card.dto.CardUpdateDTO;
+import com.dtb.cms.card.errors.CardLimitExceededException;
 import com.dtb.cms.card.model.entity.Card;
 import com.dtb.cms.card.model.enums.CardTypes;
 import com.dtb.cms.card.model.key.CardId;
@@ -19,6 +22,9 @@ import org.springframework.stereotype.Service;
 public class CardService {
     @Autowired
     private CardRepository repo;
+
+    @Autowired
+    private AccountRepository accountRepo;
 
     /**
      * Method to mask the pan unless override param is passed
@@ -48,11 +54,11 @@ public class CardService {
     private CardDTO toCardDTO(Card card, boolean override){
         return CardDTO.builder()
                 .cardId(card.getId().getCardId())
-                .cardType(String.valueOf(card.getId().getCardType()))
+                .cardType(card.getId().getCardType())
                 .alias(card.getAlias())
                 .pan(maskPan(card.getPan(), override))
                 .cvv(maskCvv(card.getCvv(), override))
-                .accountId(card.getAccountId()) //TODO: REVIEW IF NEEDED
+                .accountId(card.getAccount().getAccountId())
                 .build();
     }
 
@@ -73,6 +79,32 @@ public class CardService {
         Page<Card> rawData = repo.findAll(fullSpec, pageable);
 
         return rawData.map(card -> toCardDTO(card, override));
+    }
+
+    /**
+     * method to add new card
+     * */
+    public CardDTO addCard(Long accountId, CardDTO reqBody){
+        Account account = accountRepo.findById(accountId).orElseThrow(()-> new EntityNotFoundException("Account not found"));
+
+        int existingCardsCount = repo.countByAccountId(accountId);
+
+        if(existingCardsCount >= 2){
+            throw new CardLimitExceededException("Account already has the maximum number of cards(2)");
+        }
+
+        CardId id = new CardId(reqBody.getCardId(), reqBody.getCardType());
+
+        Card newCard = new Card();
+        newCard.setId(id);
+        newCard.setAlias(reqBody.getAlias());
+        newCard.setPan(reqBody.getPan());
+        newCard.setCvv(reqBody.getCvv());
+        newCard.setAccount(account);
+
+        // default override to false
+        return toCardDTO(repo.save(newCard), false);
+
     }
 
     /**

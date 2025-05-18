@@ -45,6 +45,17 @@ public class CardController {
     }
 
     /**
+     * Add new card endpoint
+     * */
+    @PostMapping
+    public ResponseEntity<?> addCard(@RequestParam Long accountId,
+                                     @RequestBody CardDTO reqBody){
+
+        CardDTO newCardObj = service.addCard(accountId, reqBody);
+        return ResponseEntity.ok(newCardObj);
+    }
+
+    /**
      * Card update endpoint
      * */
     @PutMapping("/{cardId}/{cardType}")
