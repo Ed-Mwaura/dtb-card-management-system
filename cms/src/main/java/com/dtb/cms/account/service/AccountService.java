@@ -4,6 +4,7 @@ import com.dtb.cms.account.dto.AccountDTO;
 import com.dtb.cms.account.model.Account;
 import com.dtb.cms.account.repository.AccountRepository;
 import com.dtb.cms.account.specification.AccountSpecifications;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -31,6 +32,9 @@ public class AccountService {
                 .build();
     }
 
+    /**
+     * Method that retrieves a paginated list of accounts that match the given filters
+     * */
     public Page<AccountDTO> getAccounts(int page, int size, String iban, String bicSwift, String cardAlias){
         Pageable pageable = PageRequest.of(page, size);
 
@@ -46,4 +50,18 @@ public class AccountService {
 
         return rawData.map(this::toAccountDTO);
     }
+
+    //TODO: None of the attributes of account seem editable. Confirm.
+
+    /**
+     * Method to delete a given account
+     * */
+    public void deleteAccount(Long accountId){
+        if(!repo.existsById(accountId)){
+            throw new EntityNotFoundException("Account not found with ID: " + accountId);
+        }
+
+        repo.deleteById(accountId);
+    }
+
 }

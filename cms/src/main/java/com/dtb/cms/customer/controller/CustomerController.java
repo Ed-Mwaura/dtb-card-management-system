@@ -1,15 +1,13 @@
 package com.dtb.cms.customer.controller;
 
 import com.dtb.cms.customer.dto.CustomerDTO;
+import com.dtb.cms.customer.dto.CustomerUpdateDTO;
 import com.dtb.cms.customer.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -38,5 +36,28 @@ public class CustomerController {
         response.put("pageSize", pageResult.getSize());
 
         return ResponseEntity.ok(response);
+    }
+
+    /**
+     * Customer update endpoint
+     * */
+    @PutMapping("/{customerId}")
+    public  ResponseEntity<?> updateCustomer(@PathVariable Long customerId,
+                                             @RequestBody CustomerUpdateDTO reqBody){
+
+        CustomerDTO updatedCustomer = service.updateCustomer(customerId, reqBody);
+
+        return ResponseEntity.ok(updatedCustomer);
+
+    }
+
+    /**
+     * Delete customer endpoint
+     * */
+    @DeleteMapping("/{customerId}")
+    public ResponseEntity<Void> deleteCustomer(@PathVariable Long customerId){
+        service.deleteCustomer(customerId);
+
+        return ResponseEntity.noContent().build();
     }
 }

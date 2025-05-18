@@ -1,9 +1,11 @@
 package com.dtb.cms.customer.service;
 
 import com.dtb.cms.customer.dto.CustomerDTO;
+import com.dtb.cms.customer.dto.CustomerUpdateDTO;
 import com.dtb.cms.customer.model.Customer;
 import com.dtb.cms.customer.repository.CustomerRepository;
 import com.dtb.cms.customer.specification.CustomerSpecifications;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -49,6 +51,9 @@ public class CustomerService {
                 .build();
     }
 
+    /**
+     * Method that retrieves a paginated list of customers that match the given filters
+     * */
     public Page<CustomerDTO> getCustomers(int page, int size, String name, Date start, Date end){
 
         // adjusting end day to be inclusive of end day by setting to actual end of day
@@ -67,5 +72,40 @@ public class CustomerService {
         Page<Customer> rawResults = repo.findAll(finalSPec, pageable);
 
         return rawResults.map(this::toCustomerDTO);
+    }
+
+    /**
+     * Method that updates given customer
+     * */
+    public CustomerDTO updateCustomer(Long customerId, CustomerUpdateDTO reqBody){
+        Customer customer = repo.findById(customerId).orElseThrow(()->new EntityNotFoundException("Customer not found"));
+
+        //catch PropertyValueException
+
+        // update allowed fields
+        if(reqBody.getFirstName() != null){
+            customer.setFirstName(reqBody.getFirstName());
+        }
+        if(reqBody.getLastName() != null) {
+            customer.setLastName(reqBody.getLastName());
+        }
+        if(reqBody.getOtherName() != null) {
+            customer.setOtherName(reqBody.getOtherName());
+        }
+
+        Customer saved = repo.save(customer);
+
+        return toCustomerDTO(saved);
+    }
+
+    /**
+     * Method to delete a given customer
+     * */
+    public void deleteCustomer(Long customerId){
+        if(!repo.existsById(customerId)){
+            throw new EntityNotFoundException("Card not found with ID: " + customerId);
+        }
+
+        repo.deleteById(customerId);
     }
 }

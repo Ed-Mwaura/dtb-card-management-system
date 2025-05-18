@@ -1,14 +1,13 @@
 package com.dtb.cms.card.controller;
 
 import com.dtb.cms.card.dto.CardDTO;
+import com.dtb.cms.card.dto.CardUpdateDTO;
+import com.dtb.cms.card.model.enums.CardTypes;
 import com.dtb.cms.card.service.CardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,6 +18,9 @@ public class CardController {
     @Autowired
     private CardService service;
 
+    /**
+     * Endpoint for paginated list of cards
+     * */
     @GetMapping
     public ResponseEntity<?> getCards(@RequestParam Integer page,
                                       @RequestParam Integer size,
@@ -40,5 +42,30 @@ public class CardController {
         // return only ok response.
         // TODO: Create Global error handler for other response statuses & throw in service
         return ResponseEntity.ok(response);
+    }
+
+    /**
+     * Card update endpoint
+     * */
+    @PutMapping("/{cardId}/{cardType}")
+    public ResponseEntity<?> updateCard(@PathVariable Long cardId,
+                                        @PathVariable CardTypes cardType,
+                                        @RequestBody CardUpdateDTO reqBody){
+
+        CardDTO updated = service.updateCard(cardId, cardType, reqBody);
+
+        return ResponseEntity.ok(updated);
+    }
+
+    /**
+     * Delete card endpoint
+     * */
+    @DeleteMapping("/{cardId}/{cardType}")
+    public ResponseEntity<Void> deleteCard(@PathVariable Long cardId,
+                                           @PathVariable CardTypes cardType){
+
+        //TODO: Because of using enum, card type must match case. Review whether to maintain this
+        service.deleteCard(cardId, cardType);
+        return ResponseEntity.noContent().build(); // 204
     }
 }
