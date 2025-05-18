@@ -8,6 +8,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Card model
+ * */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -25,11 +28,11 @@ public class Card {
     @Column(nullable = false)
     private String cvv;
 
-    @Column(name = "account_id", insertable = false, updatable = false)
+    @Column(name = "account_id")
     private Long accountId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "account_id")
+    @JoinColumn(name = "account_id", insertable = false, updatable = false)
     @JsonIgnore
     private Account account;
 }

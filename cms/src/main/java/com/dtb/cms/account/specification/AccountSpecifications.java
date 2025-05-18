@@ -6,6 +6,10 @@ import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
 import org.springframework.data.jpa.domain.Specification;
 
+/**
+ * Specifications class for accounts.
+ * Defines the filters to be applied on accounts api
+ * */
 public class AccountSpecifications {
     // iban, bicSwift and cardAlias
     public static Specification<Account> ibanLike (String iban){

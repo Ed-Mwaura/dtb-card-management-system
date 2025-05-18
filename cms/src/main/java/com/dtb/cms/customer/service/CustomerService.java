@@ -1,5 +1,6 @@
 package com.dtb.cms.customer.service;
 
+import com.dtb.cms.customer.dto.CustomerDTO;
 import com.dtb.cms.customer.model.Customer;
 import com.dtb.cms.customer.repository.CustomerRepository;
 import com.dtb.cms.customer.specification.CustomerSpecifications;
@@ -20,7 +21,9 @@ public class CustomerService {
     private CustomerRepository repo;
 
     /**
-     * Method to set end date to actual end of day
+     * Method to set end date to actual end of day. (23:59:59:999)
+     * By default, Date comes with time of 00:00:00, which will affect
+     * fetched results if the specified end day contains data
      * */
     private Date adjustDate(Date dateToAdjust){
         Calendar cal = Calendar.getInstance();
@@ -33,19 +36,36 @@ public class CustomerService {
         return cal.getTime();
     }
 
-    public Page<Customer> getCustomers(int page, int size, String name, Date start, Date end){
-        // end date reads time of 00:00:00
-        // entities created on that day will be filtered out (muy bad)
-        // adjusting to include selected day
+    /**
+     * Method to convert the customer to DTO that defines what will be displayed.
+     * */
+    private CustomerDTO toCustomerDTO(Customer customer){
+        return CustomerDTO.builder()
+                .customerId(customer.getCustomerId())
+                .firstName(customer.getFirstName())
+                .lastName(customer.getLastName())
+                .otherName(customer.getOtherName())
+                .dateCreated(customer.getDateCreated())
+                .build();
+    }
+
+    public Page<CustomerDTO> getCustomers(int page, int size, String name, Date start, Date end){
+
+        // adjusting end day to be inclusive of end day by setting to actual end of day
         if (end != null) {
             end = adjustDate(end);
         }
         Pageable pageable = PageRequest.of(page, size);
 
+        // call the filters
         Specification<Customer> fullNameSpec = CustomerSpecifications.fullNameContains(name);
         Specification<Customer> dateRangeSpec = CustomerSpecifications.createdBetween(start, end);
 
+        // join the filters
         Specification<Customer> finalSPec = Specification.where(fullNameSpec).and(dateRangeSpec);
-        return repo.findAll(finalSPec, pageable);
+
+        Page<Customer> rawResults = repo.findAll(finalSPec, pageable);
+
+        return rawResults.map(this::toCustomerDTO);
     }
 }

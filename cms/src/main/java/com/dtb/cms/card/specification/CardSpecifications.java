@@ -3,6 +3,10 @@ package com.dtb.cms.card.specification;
 import com.dtb.cms.card.model.entity.Card;
 import org.springframework.data.jpa.domain.Specification;
 
+/**
+ * Specifications class for cards.
+ * Defines the filters to be applied on cards api
+ * */
 public class CardSpecifications {
     public static Specification<Card> aliasLike(String alias){
         return (root, query, cb) -> {

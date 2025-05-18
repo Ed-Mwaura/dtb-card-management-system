@@ -1,5 +1,6 @@
 package com.dtb.cms.account.service;
 
+import com.dtb.cms.account.dto.AccountDTO;
 import com.dtb.cms.account.model.Account;
 import com.dtb.cms.account.repository.AccountRepository;
 import com.dtb.cms.account.specification.AccountSpecifications;
@@ -18,15 +19,31 @@ public class AccountService {
     @Autowired
     private AccountRepository repo;
 
-    public Page<Account> getAccounts(int page, int size, String iban, String bicSwift, String cardAlias){
+    /**
+     * Method to convert the account to DTO that defines what will be displayed.
+     * */
+    private AccountDTO toAccountDTO(Account account){
+        return AccountDTO.builder()
+                .accountId(account.getAccountId())
+                .iban(account.getIban())
+                .bicSwift(account.getBicSwift())
+                .customerId(account.getCustomerId())
+                .build();
+    }
+
+    public Page<AccountDTO> getAccounts(int page, int size, String iban, String bicSwift, String cardAlias){
         Pageable pageable = PageRequest.of(page, size);
 
+        // call the filters
         Specification<Account> ibanSpec = AccountSpecifications.ibanLike(iban);
         Specification<Account> bicSwiftSpec = AccountSpecifications.bicSwiftLike(bicSwift);
         Specification<Account> cardAliasSpec = AccountSpecifications.cardAliasLike(cardAlias);
 
+        // join the filters
         Specification<Account> fullSpec = Specification.where(ibanSpec).and(bicSwiftSpec).and(cardAliasSpec);
 
-        return repo.findAll(fullSpec, pageable);
+        Page<Account> rawData = repo.findAll(fullSpec, pageable);
+
+        return rawData.map(this::toAccountDTO);
     }
 }

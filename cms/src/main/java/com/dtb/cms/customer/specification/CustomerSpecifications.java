@@ -9,6 +9,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * Specifications class for customers.
+ * Defines the filters to be applied on customers api
+ * */
 public class CustomerSpecifications {
     public static Specification<Customer> fullNameContains(String name) {
         return (root, query, cb) -> {

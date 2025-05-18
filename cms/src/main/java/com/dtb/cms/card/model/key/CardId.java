@@ -9,6 +9,10 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
+/**
+ * Composite primary key class since one user
+ * can only have one card of a particular type
+ * */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
