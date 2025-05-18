@@ -35,10 +35,11 @@ public class CustomerService {
 
     public Page<Customer> getCustomers(int page, int size, String name, Date start, Date end){
         // end date reads time of 00:00:00
-        // entities created on that day will be filtered out - not intended
+        // entities created on that day will be filtered out (muy bad)
         // adjusting to include selected day
-        end = adjustDate(end);
-
+        if (end != null) {
+            end = adjustDate(end);
+        }
         Pageable pageable = PageRequest.of(page, size);
 
         Specification<Customer> fullNameSpec = CustomerSpecifications.fullNameContains(name);

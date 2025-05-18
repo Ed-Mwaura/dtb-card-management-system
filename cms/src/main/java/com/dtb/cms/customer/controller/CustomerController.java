@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/cms/api")
@@ -26,8 +28,15 @@ public class CustomerController {
                                           @RequestParam(required = false) String name,
                                           @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date start,
                                           @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date end){
-        Page<Customer> results =  service.getCustomers(page, size, name, start, end);
+        Page<Customer> pageResult =  service.getCustomers(page, size, name, start, end);
 
-        return ResponseEntity.ok(results);
+        Map<String, Object> response = new HashMap<>();
+        response.put("content", pageResult.getContent());
+        response.put("currentPage", pageResult.getNumber());
+        response.put("totalItems", pageResult.getTotalElements());
+        response.put("totalPages", pageResult.getTotalPages());
+        response.put("pageSize", pageResult.getSize());
+
+        return ResponseEntity.ok(response);
     }
 }
