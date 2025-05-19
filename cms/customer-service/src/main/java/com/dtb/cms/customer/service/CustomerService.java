@@ -75,6 +75,15 @@ public class CustomerService {
     }
 
     /**
+     * Method to get customer by id
+     * */
+    public CustomerDTO getCustomerById(Long customerId){
+        Customer customer = repo.findById(customerId).orElseThrow(()->new EntityNotFoundException("Customer not found"));
+
+        return toCustomerDTO(customer);
+    }
+
+    /**
      * Method that adds a new customer
      * */
     public CustomerDTO addCustomer(CustomerDTO reqBody){

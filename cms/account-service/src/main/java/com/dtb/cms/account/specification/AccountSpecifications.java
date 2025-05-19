@@ -5,6 +5,8 @@ import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.util.List;
+
 /**
  * Specifications class for accounts.
  * Defines the filters to be applied on accounts api
@@ -32,6 +34,15 @@ public class AccountSpecifications {
             String pattern = "%" + bicSwift.toLowerCase() + "%";
 
             return cb.like(cb.lower(root.get("bicSwift")), pattern);
+        };
+    }
+
+    public static Specification<Account> accountIdIn(List<Long> accountIds){
+        return(root, query, criteriaBuilder) -> {
+                if(accountIds == null || accountIds.isEmpty()){
+                    return criteriaBuilder.conjunction();
+                }
+                return  root.get("accountId").in(accountIds);
         };
     }
 

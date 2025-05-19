@@ -1,4 +1,4 @@
-package com.dtb.cms.card.errors;
+package com.dtb.cms.card.exception;
 
 public class CardLimitExceededException extends RuntimeException{
     public CardLimitExceededException(String message){

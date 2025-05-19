@@ -41,6 +41,16 @@ public class AccountController {
     }
 
     /**
+     * endpoint to find account by id
+     * */
+    @GetMapping("/{accountId}")
+    public ResponseEntity<?> getAccountById(@PathVariable Long accountId){
+        AccountDTO account = service.findAccountById(accountId);
+
+        return ResponseEntity.ok(account);
+    }
+
+    /**
      * Create new account endpoint
      * */
     @PostMapping

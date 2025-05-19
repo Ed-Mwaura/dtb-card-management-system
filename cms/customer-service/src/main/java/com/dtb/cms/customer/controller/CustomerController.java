@@ -39,6 +39,16 @@ public class CustomerController {
     }
 
     /**
+     * endpoint to get customer by id
+     * */
+    @GetMapping("/{customerId}")
+    public ResponseEntity<?> getCustomerById(@PathVariable Long customerId){
+        CustomerDTO result = service.getCustomerById(customerId);
+
+        return ResponseEntity.ok(result);
+    }
+
+    /**
      * New customer endpoint
      * */
     @PostMapping("/add")

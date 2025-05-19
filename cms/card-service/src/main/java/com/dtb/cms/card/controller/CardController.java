@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -78,5 +79,15 @@ public class CardController {
         //TODO: Because of using enum, card type must match case. Review whether to maintain this
         service.deleteCard(cardId, cardType);
         return ResponseEntity.noContent().build(); // 204
+    }
+
+    /**
+     * Get account id list based on provided alias
+     * */
+    @GetMapping("/by-alias")
+    public ResponseEntity<List<Long>> getAccountIdsByAlias(@RequestParam String alias){
+        List<Long> results =  service.findAccountsByCardAlias(alias);
+
+        return ResponseEntity.ok(results);
     }
 }

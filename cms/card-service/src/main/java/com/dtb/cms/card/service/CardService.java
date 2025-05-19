@@ -2,7 +2,7 @@ package com.dtb.cms.card.service;
 
 import com.dtb.cms.card.dto.CardDTO;
 import com.dtb.cms.card.dto.CardUpdateDTO;
-import com.dtb.cms.card.errors.CardLimitExceededException;
+import com.dtb.cms.card.exception.CardLimitExceededException;
 import com.dtb.cms.card.model.entity.Card;
 import com.dtb.cms.card.model.enums.CardTypes;
 import com.dtb.cms.card.repository.CardRepository;
@@ -15,15 +15,18 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.List;
 
 @Service
 public class CardService {
     @Autowired
     private CardRepository repo;
-//
-//    @Autowired
-//    private RestTemplate restTemplate;
+
+    @Autowired
+    private RestTemplate restTemplate;
 
     @Value("${account.service.url}")
     private String accountServiceUrl;
@@ -85,18 +88,33 @@ public class CardService {
     }
 
     /**
+     * Method that calls the accounts service to check if provided
+     * accountId exists
+     * */
+    public void verifyAccountExists(Long accountId){
+        String url = accountServiceUrl + accountId;
+        try{
+            restTemplate.getForObject(url, Void.class);
+        } catch (HttpClientErrorException.NotFound e){
+            throw new EntityNotFoundException("Account with id " + accountId + " not found!");
+        }
+    }
+
+    /**
      * method to add new card
      * */
     public CardDTO addCard(Long accountId, CardDTO reqBody){
-//        Account account = accountRepo.findById(accountId).orElseThrow(()-> new EntityNotFoundException("Account not found"));
+        verifyAccountExists(accountId);
 
-//        // verify account exists by calling account-service
-//        verifyAccountExists()
-//        int existingCardsCount = repo.countByAccountId(accountId);
-//
-//        if(existingCardsCount >= 2){
-//            throw new CardLimitExceededException("Account already has the maximum number of cards(2)");
-//        }
+        int existingCardsCount = repo.countByAccountId(accountId);
+        if(existingCardsCount >= 2){
+            throw new CardLimitExceededException("Account already has the maximum number of cards(2)");
+        }
+
+        int existingCardWithCardType = repo.countByAccountIdAndCardType(accountId, reqBody.getCardType());
+        if(existingCardWithCardType >= 1){
+            throw new CardLimitExceededException("Account already has card of type: " + reqBody.getCardType());
+        }
 
 
         Card newCard = new Card();
@@ -150,5 +168,15 @@ public class CardService {
         }
 
         repo.deleteById(cardId);
+    }
+
+    /**
+     * Method to retrieve list of accounts
+     * whose card aliases match provided alias.
+     * To be used by accounts service to filter accounts
+     * by card alias.
+     * */
+    public List<Long> findAccountsByCardAlias(String alias){
+        return repo.findByAliasContainingIgnoreCase(alias).stream().map(Card::getAccountId).distinct().toList();
     }
 }
