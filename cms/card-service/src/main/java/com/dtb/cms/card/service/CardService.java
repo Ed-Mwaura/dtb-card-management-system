@@ -133,13 +133,8 @@ public class CardService {
     /**
      * Method that updates given card
      * */
-    public CardDTO updateCard(Long cardId, CardTypes cardType, CardUpdateDTO reqBody){
+    public CardDTO updateCard(Long cardId, CardUpdateDTO reqBody){
 
-        // TODO: check existing card type
-
-
-        // throw error that will be handled by global exception handler once implemented
-        //TODO: implement global exception handler
         Card card = repo.findById(cardId).orElseThrow(() -> new EntityNotFoundException("Card not found"));
 
         // update allowed fields
@@ -162,9 +157,9 @@ public class CardService {
     /**
      * Method to delete a given card
      * */
-    public void deleteCard(Long cardId, CardTypes cardType){
+    public void deleteCard(Long cardId){
         if(!repo.existsById(cardId)){
-            throw new EntityNotFoundException("Card not found with ID: "+ cardId + ", type: " + cardType);
+            throw new EntityNotFoundException("Card not found with ID: "+ cardId);
         }
 
         repo.deleteById(cardId);

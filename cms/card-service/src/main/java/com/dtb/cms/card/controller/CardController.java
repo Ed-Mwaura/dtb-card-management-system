@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@CrossOrigin(origins = "http://localhost:8080")
 @RestController
 @RequestMapping("/cms/api/cards")
 public class CardController {
@@ -40,8 +41,7 @@ public class CardController {
         response.put("totalPages", pageResult.getTotalPages());
         response.put("pageSize", pageResult.getSize());
 
-        // return only ok response.
-        // TODO: Create Global error handler for other response statuses & throw in service
+        // return only ok response. Global error handler handles the rest
         return ResponseEntity.ok(response);
     }
 
@@ -59,12 +59,11 @@ public class CardController {
     /**
      * Card update endpoint
      * */
-    @PutMapping("/{cardId}/{cardType}")
+    @PutMapping("/{cardId}")
     public ResponseEntity<?> updateCard(@PathVariable Long cardId,
-                                        @PathVariable CardTypes cardType,
                                         @RequestBody CardUpdateDTO reqBody){
 
-        CardDTO updated = service.updateCard(cardId, cardType, reqBody);
+        CardDTO updated = service.updateCard(cardId, reqBody);
 
         return ResponseEntity.ok(updated);
     }
@@ -72,12 +71,11 @@ public class CardController {
     /**
      * Delete card endpoint
      * */
-    @DeleteMapping("/{cardId}/{cardType}")
-    public ResponseEntity<Void> deleteCard(@PathVariable Long cardId,
-                                           @PathVariable CardTypes cardType){
+    @DeleteMapping("/{cardId}")
+    public ResponseEntity<Void> deleteCard(@PathVariable Long cardId){
 
         //TODO: Because of using enum, card type must match case. Review whether to maintain this
-        service.deleteCard(cardId, cardType);
+        service.deleteCard(cardId);
         return ResponseEntity.noContent().build(); // 204
     }
 
