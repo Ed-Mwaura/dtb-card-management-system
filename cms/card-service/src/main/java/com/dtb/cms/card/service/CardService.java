@@ -4,7 +4,6 @@ import com.dtb.cms.card.dto.CardDTO;
 import com.dtb.cms.card.dto.CardUpdateDTO;
 import com.dtb.cms.card.exception.CardLimitExceededException;
 import com.dtb.cms.card.model.entity.Card;
-import com.dtb.cms.card.model.enums.CardTypes;
 import com.dtb.cms.card.repository.CardRepository;
 import com.dtb.cms.card.specification.CardSpecifications;
 import jakarta.persistence.EntityNotFoundException;
