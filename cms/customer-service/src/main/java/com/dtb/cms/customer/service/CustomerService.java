@@ -60,6 +60,10 @@ public class CustomerService {
         if (end != null) {
             end = adjustDate(end);
         }
+
+        if(start.after(end)){
+            throw new IllegalArgumentException("Start date must not be before end date");
+        }
         Pageable pageable = PageRequest.of(page, size);
 
         // call the filters
